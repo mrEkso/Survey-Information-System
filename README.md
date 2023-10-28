@@ -14,12 +14,6 @@ $ git clone https://gitlab.com/21brv21/ridnya-backend
 ```sh
 $ cd OnlineSurveySystem
 ```
-3.створюємо .env з файлу .env.example
-```sh
-$ cp .env.example .env
+3.запускаємо функцію main в OnlineSurveySystemApplication.java
 ```
-4.збираємо наш проект
-```sh
-$ docker-compose up -d
-
 готово :)
