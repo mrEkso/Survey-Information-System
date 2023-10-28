@@ -8,7 +8,7 @@ Technologies: Java (Spring Boot), React.JS, Docker, MySQL
 
 1.копіюємо репозиторій
 ```sh
-$ git clone https://gitlab.com/21brv21/ridnya-backend
+$ git clone https://gitlab.com/david.okayach/online-survey-system.git
 ```
 2.переходимо в папку
 ```sh
