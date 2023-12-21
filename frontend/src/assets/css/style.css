@@ -1,0 +1,53 @@
+body {
+    animation: body-animation 2s;
+}
+
+@keyframes body-animation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.scale-animation {
+    animation: scale-animation 1s;
+}
+
+@keyframes scale-animation {
+    0% {
+        scale: 0;
+    }
+    100% {
+        scale: 1;
+    }
+}
+
+@keyframes logo-animation {
+    0% {
+        width: 30%;
+        margin-left: 10%;
+    }
+    100% {
+        margin-left: 5%;
+    }
+}
+
+.opacity-animation:hover {
+    opacity: 1;
+    scale: 0.95;
+}
+
+.icon-animation {
+    cursor: pointer;
+    transition: .3s;
+}
+
+.icon-animation:hover {
+    color: #000000;
+}
+
+.clickable {
+    cursor: pointer;
+}
