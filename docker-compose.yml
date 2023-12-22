@@ -1,0 +1,55 @@
+version: "3.1"
+services:
+  ### mysql ####################################################
+  mysql:
+    image: mysql
+    container_name: ${DOCKER_PROJECT_NAME}-mysql
+    environment:
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - ${DOCKER_MYSQL_PORT}:${DB_PORT}
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u root -p1234" ]
+      timeout: 20s
+      retries: 10
+    networks:
+      - localnet
+  ### spring ###################################################
+  spring-boot-app:
+    container_name: ${DOCKER_PROJECT_NAME}-spring-boot-app
+    restart: on-failure
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - ${SPRING_DOCKER_PORT}:${SPRING_PORT}
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      APP_FRONTEND_URL: ${APP_FRONTEND_URL}
+    networks:
+      - localnet
+  ### react ####################################################
+  react-app:
+    container_name: ${DOCKER_PROJECT_NAME}-react-app
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - '/app/node_modules'
+      - '.:/app'
+    ports:
+      - ${REACT_DOCKER_PORT}:${REACT_PORT}
+    networks:
+      - localnet
+networks:
+  localnet:
+    driver: bridge

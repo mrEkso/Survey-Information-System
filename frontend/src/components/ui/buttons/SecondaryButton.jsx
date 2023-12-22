@@ -8,7 +8,7 @@ export const SecondaryButton = (props) => {
                     size={"medium"}
                     color={"secondary"}
                     className={"opacity-animation"}
-        >{children}</Button>)
+    >{children}</Button>)
 }
 
 SecondaryButton.propTypes = {
