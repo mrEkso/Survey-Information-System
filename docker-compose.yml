@@ -34,7 +34,6 @@ services:
       DB_URL: ${DB_URL}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
-      APP_FRONTEND_URL: ${APP_FRONTEND_URL}
     networks:
       - localnet
   ### react ####################################################

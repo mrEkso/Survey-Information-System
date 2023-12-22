@@ -22,7 +22,6 @@ export const LoginButton = ({children}) => {
         } catch (error) {
             console.log(error)
         }
-        console.log(isAuth, user)
     };
 
     const handleOpenLoginMenu = (event) => {

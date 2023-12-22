@@ -17,8 +17,6 @@ RUN mvn clean package -DskipTests
 # Create a new image for running the application
 FROM openjdk:17-jdk
 
-ARG DEPENDENCY=/app/target/dependency
-
 # Set the working directory
 WORKDIR /app
 

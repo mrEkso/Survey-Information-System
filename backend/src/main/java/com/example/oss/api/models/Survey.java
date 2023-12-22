@@ -24,7 +24,6 @@ public class Survey {
     private UUID id;
 
     @Setter
-    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -36,9 +35,6 @@ public class Survey {
     @NotBlank
     @Size(max = 500)
     private String subtitle;
-
-    @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL)
-    private List<SurveyOption> options;
 
     @CreatedDate
     private Instant createdAt;

@@ -33,6 +33,7 @@ public class SurveyController {
     final private ApplicantService applicantService;
 
     @GetMapping({"", "/search"})
+    @CrossOrigin
     @ResponseBody
     protected Page<Survey> index(@RequestParam(required = false) String searchText,
                                  @RequestParam(defaultValue = "0") int page) {
@@ -40,6 +41,7 @@ public class SurveyController {
     }
 
     @GetMapping("/{id}")
+    @CrossOrigin
     protected Survey show(Model model,
                           @PathVariable UUID id,
                           @AuthenticationPrincipal User user) {

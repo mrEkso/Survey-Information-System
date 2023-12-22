@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class AuthorizationController {
     private final UserService userService;
