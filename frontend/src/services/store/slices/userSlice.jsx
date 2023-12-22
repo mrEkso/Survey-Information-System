@@ -13,11 +13,11 @@ const slice = createSlice({
     }, extraReducer: (builder) => {
         builder
             .addMatcher(authApi.endpoints.register.matchFulfilled, (state, action) => {
-                state.user = action.payload;
+                state.user = action.payload.data;
                 state.isAuth = true;
             })
             .addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => {
-                state.user = action.payload;
+                state.user = action.payload.data;
                 state.isAuth = true;
             })
     }

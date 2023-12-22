@@ -3,7 +3,7 @@ import {createTheme} from '@mui/material/styles';
 export const theme = createTheme({
     palette: {
         gold: {
-            main: '#FFD700',
+            main: '#ffe87b',
         },
         secondary: {
             main: '#ff1e58',

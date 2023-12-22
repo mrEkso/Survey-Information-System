@@ -12,5 +12,5 @@ export const CenteredContainer = ({children}) => {
 }
 
 CenteredContainer.propTypes = {
-    children: PropTypes.object.isRequired
+    children: PropTypes.object
 }
