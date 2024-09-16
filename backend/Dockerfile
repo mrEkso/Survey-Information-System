@@ -7,6 +7,8 @@ WORKDIR /app
 # Copy the pom.xml and any other necessary configuration files
 COPY ./pom.xml .
 
+RUN mvn dependency:go-offline
+
 COPY src src
 
 # Build the application
@@ -24,4 +26,4 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Command to run the application
-CMD ["java", "-jar", "app.jar"]
+CMD ["java", "-Dspring.devtools.restart.enabled=true", "-jar", "app.jar"]

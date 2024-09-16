@@ -3,19 +3,20 @@ import PropTypes from "prop-types";
 import {useState} from "react";
 import {SecondaryButton} from "@components/ui/buttons/SecondaryButton";
 import {PrimaryButton} from "@components/ui/buttons/PrimaryButton.jsx";
-import {useLoginMutation} from "@services/store/api/authApi.jsx";
+import {useRegisterMutation} from "src/services/store/api/authApi.jsx";
 import useTopSnackbar from "@components/ui/snackbars/TopSnackbar.jsx";
 
-export const LoginButton = () => {
+export const RegisterButton = () => {
+    const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [loginForm, setLoginForm] = useState(null);
-    const [login] = useLoginMutation();
+    const [registerForm, setRegisterForm] = useState(null);
+    const [register] = useRegisterMutation();
     const snackbar = useTopSnackbar();
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
         try {
-            const {error, data} = await login({email, password});
+            const {error, data} = await register({username, email, password});
             let messages = [];
 
             if (error) {
@@ -31,27 +32,26 @@ export const LoginButton = () => {
             messages.forEach(message => snackbar(message, error ? "error" : "success"));
             console.log(error || data);
         } catch (error) {
-            snackbar("An unexpected error occurred", "error");
             console.log(error)
         }
     };
 
-    const handleOpenLoginMenu = (event) => {
-        setLoginForm(event.currentTarget);
+    const handleOpenRegisterMenu = (event) => {
+        setRegisterForm(event.currentTarget);
     };
-    const handleCloseLoginMenu = () => {
-        setLoginForm(null);
+    const handleCloseRegisterMenu = () => {
+        setRegisterForm(null);
     };
 
     return (<Box sx={{flexGrow: 0}}>
-        <Tooltip title="Open login form">
-            <SecondaryButton onClick={handleOpenLoginMenu}
-            >Login</SecondaryButton>
+        <Tooltip title="Open Register form">
+            <SecondaryButton onClick={handleOpenRegisterMenu}
+            >Register</SecondaryButton>
         </Tooltip>
         <Menu
             sx={{mt: '45px'}}
             id="menu-appbar"
-            anchorEl={loginForm}
+            anchorEl={registerForm}
             anchorOrigin={{
                 vertical: 'top', horizontal: 'right',
             }}
@@ -59,16 +59,18 @@ export const LoginButton = () => {
             transformOrigin={{
                 vertical: 'top', horizontal: 'right',
             }}
-            open={Boolean(loginForm)}
-            onClose={handleCloseLoginMenu}
+            open={Boolean(registerForm)}
+            onClose={handleCloseRegisterMenu}
         >
             <Stack spacing={2} padding={2}>
+                <TextField variant={"standard"} onChange={e => setUsername(e.target.value)} label="Username"
+                           sx={{color: 'gold.main'}}/>
                 <TextField variant={"standard"} onChange={e => setEmail(e.target.value)} label="Email"
                            sx={{color: 'gold.main'}}/>
                 <TextField variant={"standard"} onChange={e => setPassword(e.target.value)} label="Password"
                            type="password"/>
-                <PrimaryButton onClick={handleLogin}>
-                    Login
+                <PrimaryButton onClick={handleRegister}>
+                    Register
                 </PrimaryButton>
             </Stack>
         </Menu>

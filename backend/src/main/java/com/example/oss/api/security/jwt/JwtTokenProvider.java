@@ -2,7 +2,10 @@ package com.example.oss.api.security.jwt;
 
 import com.example.oss.api.models.User;
 import com.example.oss.api.services.User.UserService;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +41,9 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         String emailFromToken = extractUsername(token);
+        if (emailFromToken == null || extractUser(token) == null) {
+            return false;
+        }
         String emailFromUser = extractUser(token).getEmail();
         return emailFromToken.equals(emailFromUser);
     }

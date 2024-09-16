@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit'
-import {surveyApi} from "src/services/store/api/surveyApi.jsx";
+import {surveyApi} from "@services/store/api/surveyApi";
 
 const slice = createSlice({
     name: 'surveys', initialState: {

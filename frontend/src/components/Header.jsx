@@ -5,18 +5,24 @@ import {LoginButton} from "@components/ui/buttons/LoginButton.jsx";
 import {SecondaryButton} from "@components/ui/buttons/SecondaryButton";
 import {BoldTypography} from "@components/ui/typographies/BoldTypography.jsx";
 import {LogoTypography} from "@components/ui/typographies/LogoTypography";
-import {useDispatch} from "react-redux";
+import {useSelector} from "react-redux";
+import {selectIsAuth, selectUser} from "src/services/store/slices/userSlice.jsx";
+import {LogoutButton} from "@components/ui/buttons/LogoutButton.jsx";
+import {RegisterButton} from "@components/ui/buttons/RegisterButton.jsx";
 
 export default function Header() {
-    const {user, isAuth} = useDispatch()
+    const user = useSelector(selectUser);
+    const isAuth = useSelector(selectIsAuth);
 
     return (<header>
         <AppBar position="static">
             <Toolbar sx={{justifyContent: "space-between"}}>
-                <LogoTypography flex={1} mr={3}/>
-                <ComponentBox component={LogoIcon} flex={1}/>
-                {isAuth ? (<><BoldTypography mr={2}>{user.email}</BoldTypography>
-                    <SecondaryButton>My Surveys</SecondaryButton></>) : <LoginButton>Log in</LoginButton>}
+                <LogoTypography mr={3}/>
+                <ComponentBox flex={1} component={LogoIcon}/>
+                {isAuth ? (<BoldTypography mr={2}>{user.email}</BoldTypography>) :
+                    <LoginButton mr={2}></LoginButton>}
+                {isAuth ? <><SecondaryButton>My Surveys</SecondaryButton><LogoutButton></LogoutButton></> :
+                    <RegisterButton></RegisterButton>}
             </Toolbar>
         </AppBar>
     </header>)

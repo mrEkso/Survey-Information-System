@@ -1,8 +1,8 @@
 package com.example.oss.api.services.Vote;
 
+import com.example.oss.api.models.Survey;
 import com.example.oss.api.models.User;
 import com.example.oss.api.models.Vote;
-import com.example.oss.api.models.Survey;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

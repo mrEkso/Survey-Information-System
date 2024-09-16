@@ -2,6 +2,7 @@ package com.example.oss.api.config;
 
 import com.example.oss.api.security.JwtAuthEntryPoint;
 import com.example.oss.api.security.jwt.JwtAuthenticationFilter;
+import com.example.oss.api.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -25,17 +26,19 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class SecurityConfiguration {
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/logout").authenticated()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/surveys", "/surveys/**").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling((exceptions) -> exceptions
-                        .authenticationEntryPoint(new JwtAuthEntryPoint()));
+                        .authenticationEntryPoint(jwtAuthEntryPoint));
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

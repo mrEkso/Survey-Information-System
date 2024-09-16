@@ -1,14 +1,14 @@
-import {MainFeatures} from "@components/ui/MainFeatures.jsx";
-import Surveys from "@components/ui/surveys/Surveys.jsx";
+import React from 'react';
+import {MainFeatures} from '@components/ui/MainFeatures.jsx';
+import Surveys from '@components/ui/surveys/Surveys.jsx';
 
 export default function Content() {
     return (
         <>
             <main>
-                <MainFeatures/>
-                <Surveys/>
+                <MainFeatures />
+                <Surveys />
             </main>
         </>
-    )
+    );
 }
-

@@ -18,7 +18,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class SurveyServiceImpl implements SurveyService {
-    private final int PAGE_SIZE = 3;
+    private final int PAGE_SIZE = 9;
 
     private final FactoryRepository fr;
     private final ModelMapper modelMapper;

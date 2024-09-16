@@ -1,5 +1,5 @@
-import {urls} from "src/services/store/consts.jsx";
-import {api} from "src/services/store/api.jsx";
+import {urls} from "@services/store/consts";
+import {api} from "@services/store/api";
 
 export const authApi = api.injectEndpoints({
     endpoints: builder => ({
@@ -11,13 +11,13 @@ export const authApi = api.injectEndpoints({
             query: (data) => ({
                 url: urls.auth.login, method: 'POST', body: data
             })
-        }), logout: builder.query({
-            query: (id) => ({
-                url: `${urls.auth.logout}/${id}`
+        }), logout: builder.mutation({
+            query: () => ({
+                url: `${urls.auth.logout}`, method: 'POST'
             }),
         }),
     }),
 })
 
-export const {useRegisterMutation, useLoginMutation, useLogoutQuery} = authApi
+export const {useRegisterMutation, useLoginMutation, useLogoutMutation} = authApi
 export const {endpoints: {register, login, logout}} = authApi

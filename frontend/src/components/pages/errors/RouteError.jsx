@@ -1,5 +1,4 @@
 import {useRouteError} from "react-router-dom";
-import {Container} from "@mui/material";
 import {CenteredContainer} from "@components/ui/containers/CenteredContainer.jsx";
 
 export default function RouteError() {

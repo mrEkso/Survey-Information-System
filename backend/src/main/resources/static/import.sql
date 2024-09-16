@@ -1,7 +1,8 @@
-INSERT INTO `users` (`id`, `email`, `password`, `token`)
-VALUES (unhex(replace(uuid(), '-', '')), 'baroniusokay@gmail.com',
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `token`, `role`)
+VALUES (unhex(replace(uuid(), '-', '')), 'baron', 'baroniusokay@gmail.com',
         '$2a$10$EfPJyzhtoYfnu/c9kpL1vuyFIIxue.E1dDYMkHFwptbKSQ4iWiBYC',
-        '***REMOVED_JWT_TOKEN***');
+        '***REMOVED_JWT_TOKEN***',
+        1);
 SET @user_id = (SELECT id
                 FROM `users`
                 WHERE email = 'baroniusokay@gmail.com');

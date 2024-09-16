@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -30,11 +31,16 @@ public class User implements UserDetails {
 
     @NotBlank
     @Column(unique = true)
+    @Size(max = 50)
+    private String username;
+
+    @NotBlank(message = "Адрес електронної пошти не може бути пустим")
+    @Column(unique = true)
     @Size(max = 100)
     @Email
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "Пароль не може бути пустим")
     @Size(max = 100)
     @Setter
     private String password;
@@ -42,20 +48,32 @@ public class User implements UserDetails {
     @Setter
     private String token;
 
-    public User(String email, String password, String token) {
+    public static final int ROLE_ADMIN = 1;
+    public static final int ROLE_USER = 2;
+    private int role = ROLE_USER;
+
+    public User(String username, String email, String password, String token) {
+        this.username = username;
         this.email = email;
         this.password = password;
         this.token = token;
     }
 
-    public User(String email, String password) {
+    public User(String username, String email, String password) {
+        this.username = username;
         this.email = email;
         this.password = password;
     }
 
+    public User(String email, String password, int role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + (role == ROLE_ADMIN ? "ADMIN" : "USER")));
     }
 
     @Override

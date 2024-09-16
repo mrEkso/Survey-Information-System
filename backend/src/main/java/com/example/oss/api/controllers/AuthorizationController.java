@@ -1,15 +1,23 @@
 package com.example.oss.api.controllers;
 
+import com.example.oss.api.models.User;
+import com.example.oss.api.requests.LoginRequest;
+import com.example.oss.api.requests.RegisterRequest;
 import com.example.oss.api.responses.auth.LoginResponse;
 import com.example.oss.api.responses.auth.LogoutResponse;
 import com.example.oss.api.responses.auth.RegisterResponse;
-import com.example.oss.api.models.User;
 import com.example.oss.api.services.User.UserService;
 import jakarta.security.auth.message.AuthException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
+
+import static com.example.oss.api.lang.LocalizationService.toLocale;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,8 +27,8 @@ public class AuthorizationController {
 
     @PostMapping("/register")
     @ResponseBody
-    protected RegisterResponse register(@Valid @RequestBody User user) {
-        User dbUser = userService.register(user);
+    protected RegisterResponse register(@Valid @RequestBody RegisterRequest registerRequest) {
+        User dbUser = userService.register(registerRequest.getUser());
         return new RegisterResponse(
                 userService.convertToDto(dbUser),
                 dbUser.getToken()
@@ -29,11 +37,11 @@ public class AuthorizationController {
 
     @PostMapping("/login")
     @ResponseBody
-    public LoginResponse login(@Valid @RequestBody User user) throws AuthException {
-        User dbUser = userService.loadUserByUsername(user.getEmail());
+    public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest) throws AuthException {
+        User dbUser = userService.loadUserByUsername(loginRequest.getEmail());
 
-        if (dbUser == null || userService.checkPassword(dbUser, user.getPassword()))
-            throw new AuthException();
+        if (dbUser == null || userService.checkPassword(dbUser, loginRequest.getPassword()))
+            throw new AuthException(toLocale("error.login.failed"));
 
         return new LoginResponse(
                 userService.convertToDto(dbUser),
@@ -41,9 +49,12 @@ public class AuthorizationController {
         );
     }
 
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     @ResponseBody
-    protected LogoutResponse logout() {
+    public LogoutResponse logout(HttpServletRequest request, HttpServletResponse response, Authentication user) {
+        if (user != null) {
+            new SecurityContextLogoutHandler().logout(request, response, user);
+        }
         return new LogoutResponse();
     }
 }
