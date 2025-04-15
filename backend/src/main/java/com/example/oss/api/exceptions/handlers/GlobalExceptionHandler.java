@@ -3,11 +3,9 @@ package com.example.oss.api.exceptions.handlers;
 import com.example.oss.api.exceptions.models.ErrorDetail;
 import com.example.oss.api.exceptions.models.ErrorResponse;
 import com.example.oss.api.exceptions.models.ErrorValidationResponse;
-import com.example.oss.api.lang.LocalizationService;
 import jakarta.security.auth.message.AuthException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,7 +32,7 @@ public class GlobalExceptionHandler {
 
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getClass().getSimpleName(),
                 message);
     }
 
@@ -44,8 +42,8 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleNullPointerException(NullPointerException ex) {
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                ex.getMessage());
+                ex.getClass().getSimpleName(),
+                ex.getMessage() != null ? ex.getMessage() : "Null value encountered");
     }
 
     @ExceptionHandler(AuthException.class)
@@ -54,8 +52,8 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleBadCredentialsException(AuthException ex) {
         return new ErrorResponse(
                 HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                ex.getMessage());
+                ex.getClass().getSimpleName(),
+                ex.getMessage() != null ? ex.getMessage() : "Authentication failed");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -63,24 +61,27 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ErrorValidationResponse handleValidationException(MethodArgumentNotValidException ex) {
         List<ErrorDetail> errors = ex.getFieldErrors().stream()
-                .map(fieldError -> new ErrorDetail(fieldError.getField(), fieldError.getDefaultMessage()))
+                .map(fieldError -> new ErrorDetail(
+                    fieldError.getField(), 
+                    fieldError.getDefaultMessage() != null ? fieldError.getDefaultMessage() : "Validation failed"
+                ))
                 .toList();
 
         return new ErrorValidationResponse(
                 HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getClass().getSimpleName(),
                 toLocale("error.validation.failed",
                         ex.getObjectName(), ex.getErrorCount()),
                 errors);
     }
-
+    
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorResponse handleGeneralException(Exception ex) {
         return new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                ex.getClass().getSimpleName(),
                 "Server error: " + ex.getMessage());
     }
 }

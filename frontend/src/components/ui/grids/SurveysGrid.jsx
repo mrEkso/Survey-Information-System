@@ -1,20 +1,43 @@
-import {Grid} from "@mui/material";
-import {SurveyCard} from "@components/ui/cards/SurveyCard.jsx";
+import { Grid } from "@mui/material";
+import { SurveyCard } from "@components/ui/cards/SurveyCard.jsx";
 import PropTypes from "prop-types";
+import { useState } from "react";
 
 export const SurveysGrid = (props) => {
-    const {surveys, ...gridProps} = props
-    return (<>
-        <Grid {...gridProps} justifyContent="center" spacing={3} container>
-            {surveys.content.map(survey => (<Grid item xs={12} sm={6} md={4} key={survey.id}>
-                <SurveyCard survey={survey}/>
-            </Grid>))}
+    const { surveys, ...gridProps } = props;
+    const [hoveredCardId, setHoveredCardId] = useState(null);
+
+    return (
+        <Grid {...gridProps} container spacing={3}>
+            {surveys.content.map((survey) => (
+                <Grid
+                    item
+                    key={survey.id}
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    sx={{
+                        transition: 'all 0.3s ease',
+                        transform: hoveredCardId === survey.id ? 'scale(1.05)' : 'scale(1)',
+                        zIndex: hoveredCardId === survey.id ? 1 : 0,
+                        position: 'relative',
+                        height: 'fit-content',
+                        '&:hover': {
+                            zIndex: 2,
+                        }
+                    }}
+                >
+                    <SurveyCard
+                        survey={survey}
+                        onMouseEnter={() => setHoveredCardId(survey.id)}
+                        onMouseLeave={() => setHoveredCardId(null)}
+                    />
+                </Grid>
+            ))}
         </Grid>
-    </>)
-}
+    );
+};
 
 SurveysGrid.propTypes = {
     surveys: PropTypes.object.isRequired
-}
-
-
+};

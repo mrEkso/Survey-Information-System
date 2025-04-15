@@ -14,5 +14,13 @@ export default defineConfig({
             '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
             '@services': fileURLToPath(new URL('./src/services', import.meta.url))
         }
+    },
+    server: {
+        host: true,
+        port: 5173,
+        watch: {
+            usePolling: true,
+            interval: 1000
+        }
     }
 })

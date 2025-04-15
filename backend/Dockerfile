@@ -1,20 +1,18 @@
-# Use the official Maven image as the base image
-FROM maven:3.8.4-openjdk-17 AS build
+# Development stage
+FROM maven:3.8.4-openjdk-17
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the pom.xml and any other necessary configuration files
+# Copy the pom.xml and install dependencies
 COPY ./pom.xml .
-
 RUN mvn dependency:go-offline
 
+# Copy source code
 COPY src src
 
-# Build the application
-RUN mvn clean package -DskipTests
-
-# Run the app in a minimal java container
+# Run the app with DevTools enabled
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments='-Dspring.devtools.restart.enabled=true'"]
 
 # Create a new image for running the application
 FROM openjdk:17-jdk
