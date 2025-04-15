@@ -13,6 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "surveys")
 public class Survey {
@@ -20,7 +21,6 @@ public class Survey {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Setter
     @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -36,6 +36,5 @@ public class Survey {
     @CreatedDate
     private Instant createdAt;
 
-    @Setter
     private boolean open;
 }

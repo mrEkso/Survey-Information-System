@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
-
 @Entity
 @Getter
 @NoArgsConstructor

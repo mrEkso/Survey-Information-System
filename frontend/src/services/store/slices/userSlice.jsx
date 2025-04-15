@@ -1,12 +1,17 @@
-import {createSlice} from '@reduxjs/toolkit'
-import {authApi} from "src/services/store/api/authApi.jsx";
+import { createSlice } from '@reduxjs/toolkit'
+import { authApi } from "src/services/store/api/authApi.jsx";
 
 const slice = createSlice({
     name: 'user',
     initialState: {
-        user: null,
-        isAuth: false,
-        token: localStorage.getItem('token') || null,
+        // TODO: remove this
+        user: {
+            id: "22222222-2222-2222-2222-222222222222",
+            username: "test",
+            email: "test@gmail.com"
+        },
+        isAuth: true,
+        token: "***REMOVED_JWT_TOKEN***",
     },
     reducers: {},
     extraReducers: (builder) => {
@@ -30,7 +35,7 @@ const slice = createSlice({
     }
 })
 
-export const {register, login, logout} = slice.actions
+export const { register, login, logout } = slice.actions
 export default slice.reducer
 
 export const selectUser = (state) => state.user.user

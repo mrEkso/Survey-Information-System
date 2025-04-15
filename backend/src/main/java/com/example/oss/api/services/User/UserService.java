@@ -16,7 +16,6 @@ public interface UserService extends UserDetailsService, modelMapperable<User, U
 
     Optional<User> findById(UUID id);
 
-
     User insert(User user);
 
     User update(User user);

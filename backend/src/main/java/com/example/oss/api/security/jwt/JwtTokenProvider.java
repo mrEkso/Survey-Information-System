@@ -40,12 +40,16 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
-        String emailFromToken = extractUsername(token);
-        if (emailFromToken == null || extractUser(token) == null) {
+        try {
+            String emailFromToken = extractUsername(token);
+            if (emailFromToken == null) {
+                return false;
+            }
+            User user = extractUser(token);
+            return user != null && emailFromToken.equals(user.getEmail());
+        } catch (Exception e) {
             return false;
         }
-        String emailFromUser = extractUser(token).getEmail();
-        return emailFromToken.equals(emailFromUser);
     }
 
     public User extractUser(String token) {

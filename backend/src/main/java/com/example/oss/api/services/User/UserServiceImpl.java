@@ -49,7 +49,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
-        if (user.getPassword() != null && !encoder().encode(user.getPassword()).equals(loadUserByUsername(user.getEmail()).getPassword()))
+        if (user.getPassword() != null
+                && !encoder().encode(user.getPassword()).equals(loadUserByUsername(user.getEmail()).getPassword()))
             user.setPassword(encoder().encode(user.getPassword()));
         return fr.getUserRepository().save(user);
     }

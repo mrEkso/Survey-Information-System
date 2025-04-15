@@ -1,5 +1,6 @@
 package com.example.oss.api.controllers;
 
+import com.example.oss.api.dto.SurveyDto;
 import com.example.oss.api.models.Survey;
 import com.example.oss.api.models.SurveyOption;
 import com.example.oss.api.models.User;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,10 +35,10 @@ public class SurveyController {
     final private ApplicantService applicantService;
 
     @GetMapping({ "", "/search" })
-    public ResponseEntity<Page<Survey>> index(
+    public ResponseEntity<Page<SurveyDto>> index(
             @RequestParam(required = false) String searchText,
             @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok(surveyService.findAll(searchText, page));
+        return ResponseEntity.ok(surveyService.findAll(searchText, page).map(surveyService::convertToDto));
     }
 
     @GetMapping("/{id}")
@@ -44,9 +46,7 @@ public class SurveyController {
             @PathVariable String id,
             @AuthenticationPrincipal User user) {
         if (id == null || id.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "status", 400,
-                    "message", "Survey ID cannot be null or empty"));
+            throw new IllegalArgumentException("error.survey.id.empty");
         }
         UUID surveyId = UUID.fromString(id);
         Optional<Survey> survey = surveyService.findById(surveyId);
@@ -55,14 +55,14 @@ public class SurveyController {
                     "status", 404,
                     "message", "Survey not found"));
         }
-        Survey surveyData = survey.get();
+        SurveyDto surveyDto = surveyService.convertToDto(survey.get());
         boolean hasVoted = false;
         if (user != null) {
-            Vote vote = new Vote(user, surveyData);
+            Vote vote = new Vote(user, survey.get());
             // hasVoted = voteService.checkVote(vote);
         }
         return ResponseEntity.ok(Map.of(
-                "survey", surveyData,
+                "survey", surveyDto,
                 "hasVoted", hasVoted));
     }
 
@@ -76,9 +76,13 @@ public class SurveyController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UpdateResponse> update(
+    public ResponseEntity<?> update(
             @Valid @RequestBody Survey survey,
             @AuthenticationPrincipal User user) {
+        Optional<Survey> existingSurvey = surveyService.findById(survey.getId());
+        if (!existingSurvey.get().getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("error.survey.not.owner");
+        }
         return ResponseEntity.ok(new UpdateResponse(
                 surveyService.convertToDto(
                         surveyService.update(survey, user))));
@@ -95,8 +99,10 @@ public class SurveyController {
     }
 
     @GetMapping("/my")
-    public ResponseEntity<List<Survey>> mySurveys(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(surveyService.findByUser(user));
+    public ResponseEntity<Page<SurveyDto>> mySurveys(
+            @AuthenticationPrincipal User user,
+            @RequestParam(defaultValue = "0") int page) {
+        return ResponseEntity.ok(surveyService.findByUser(user, page).map(surveyService::convertToDto));
     }
 
     @GetMapping("/result/{id}")
@@ -107,7 +113,7 @@ public class SurveyController {
         }
         List<SurveyOption> applicants = applicantService.getByVotingId(id);
         return ResponseEntity.ok(Map.of(
-                "survey", survey.get(),
+                "survey", surveyService.convertToDto(survey.get()),
                 "options", applicants));
     }
 }

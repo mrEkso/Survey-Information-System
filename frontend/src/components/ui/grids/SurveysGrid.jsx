@@ -1,10 +1,10 @@
 import { Grid } from "@mui/material";
-import { SurveyCard } from "@components/ui/cards/SurveyCard.jsx";
+import { SurveyCard } from "@components/ui/surveys/SurveyCard.jsx";
 import PropTypes from "prop-types";
 import { useState } from "react";
 
 export const SurveysGrid = (props) => {
-    const { surveys, ...gridProps } = props;
+    const { surveys, onSurveyDeleted, ...gridProps } = props;
     const [hoveredCardId, setHoveredCardId] = useState(null);
 
     return (
@@ -31,6 +31,7 @@ export const SurveysGrid = (props) => {
                         survey={survey}
                         onMouseEnter={() => setHoveredCardId(survey.id)}
                         onMouseLeave={() => setHoveredCardId(null)}
+                        onSurveyDeleted={onSurveyDeleted}
                     />
                 </Grid>
             ))}
@@ -39,5 +40,6 @@ export const SurveysGrid = (props) => {
 };
 
 SurveysGrid.propTypes = {
-    surveys: PropTypes.object.isRequired
+    surveys: PropTypes.object.isRequired,
+    onSurveyDeleted: PropTypes.func
 };

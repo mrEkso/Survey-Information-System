@@ -23,13 +23,10 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public ErrorResponse handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         String message = toLocale("error.data.integrity");
-
         if (ex.getMessage().contains("UK_r43af9ap4edm43mmtq01oddj6"))
             message = toLocale("error.user.username.unique");
-
         if (ex.getMessage().contains("UK_6dotkott2kjsp8vw4d0m25fb7"))
             message = toLocale("error.user.email.unique");
-
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getClass().getSimpleName(),
@@ -43,7 +40,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getClass().getSimpleName(),
-                ex.getMessage() != null ? ex.getMessage() : "Null value encountered");
+                ex.getMessage() != null ? toLocale(ex.getMessage()) : toLocale("error.null.value"));
     }
 
     @ExceptionHandler(AuthException.class)
@@ -53,7 +50,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 HttpStatus.UNAUTHORIZED.value(),
                 ex.getClass().getSimpleName(),
-                ex.getMessage() != null ? ex.getMessage() : "Authentication failed");
+                ex.getMessage() != null ? toLocale(ex.getMessage()) : toLocale("error.auth.failed"));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -62,9 +59,9 @@ public class GlobalExceptionHandler {
     public ErrorValidationResponse handleValidationException(MethodArgumentNotValidException ex) {
         List<ErrorDetail> errors = ex.getFieldErrors().stream()
                 .map(fieldError -> new ErrorDetail(
-                    fieldError.getField(), 
-                    fieldError.getDefaultMessage() != null ? fieldError.getDefaultMessage() : "Validation failed"
-                ))
+                        fieldError.getField(),
+                        fieldError.getDefaultMessage() != null ? fieldError.getDefaultMessage()
+                                : toLocale("error.validation.object.failed", fieldError.getField())))
                 .toList();
 
         return new ErrorValidationResponse(
@@ -74,7 +71,7 @@ public class GlobalExceptionHandler {
                         ex.getObjectName(), ex.getErrorCount()),
                 errors);
     }
-    
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
@@ -82,6 +79,6 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 ex.getClass().getSimpleName(),
-                "Server error: " + ex.getMessage());
+                toLocale("error.server.error") + ": " + toLocale(ex.getMessage()));
     }
 }

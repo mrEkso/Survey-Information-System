@@ -11,7 +11,7 @@ import java.util.UUID;
 @org.springframework.stereotype.Repository
 public interface SurveyRepository extends JpaRepository<Survey, UUID> {
 
-    List<Survey> findByUserId(UUID user_id);
+    Page<Survey> findByUserId(UUID user_id, Pageable pageable);
 
     Page<Survey> findByTitle(Pageable pageable, String title);
 }

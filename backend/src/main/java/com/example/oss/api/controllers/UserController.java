@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -23,16 +22,14 @@ import static com.example.oss.api.lang.LocalizationService.toLocale;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping({"", "/search"})
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping({ "", "/search" })
     @ResponseBody
     protected Page<User> index(@RequestParam(required = false) String searchText,
-                               @RequestParam(defaultValue = "0") int page) {
+            @RequestParam(defaultValue = "0") int page) {
         return userService.findAll(searchText, page);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     protected User show(@PathVariable UUID id) {
         Optional<User> user = userService.findById(id);
         if (user.isEmpty())
@@ -41,7 +38,6 @@ public class UserController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     @ResponseBody
     protected CreateResponse store(@Valid @RequestBody User user) {
         return new CreateResponse(
@@ -50,7 +46,6 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     @ResponseBody
     protected UpdateResponse update(@Valid @RequestBody User user) {
         return new UpdateResponse(
@@ -59,7 +54,6 @@ public class UserController {
     }
 
     @DeleteMapping
-    @PreAuthorize("hasRole('ADMIN')")
     @ResponseBody
     protected DeleteResponse destroy(@RequestParam(name = "userId") User user) {
         userService.delete(user);

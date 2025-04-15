@@ -31,22 +31,18 @@ public class AuthorizationController {
         User dbUser = userService.register(registerRequest.getUser());
         return new RegisterResponse(
                 userService.convertToDto(dbUser),
-                dbUser.getToken()
-        );
+                dbUser.getToken());
     }
 
     @PostMapping("/login")
     @ResponseBody
     public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest) throws AuthException {
         User dbUser = userService.loadUserByUsername(loginRequest.getEmail());
-
         if (dbUser == null || userService.checkPassword(dbUser, loginRequest.getPassword()))
             throw new AuthException(toLocale("error.login.failed"));
-
         return new LoginResponse(
                 userService.convertToDto(dbUser),
-                dbUser.getToken()
-        );
+                dbUser.getToken());
     }
 
     @PostMapping("/logout")

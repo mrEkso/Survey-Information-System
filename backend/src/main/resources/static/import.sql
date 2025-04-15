@@ -7,9 +7,9 @@ INSERT INTO `users` (
                 `role`
         )
 VALUES (
-                unhex(replace(uuid(), '-', '')),
+                unhex('11111111111111111111111111111111'),
                 'baron',
-                'baroniusokay@gmail.com',
+                'bar@gmail.com',
                 '$2a$10$EfPJyzhtoYfnu/c9kpL1vuyFIIxue.E1dDYMkHFwptbKSQ4iWiBYC',
                 '***REMOVED_JWT_TOKEN***',
                 1
@@ -23,18 +23,14 @@ INSERT INTO `users` (
                 `role`
         )
 VALUES (
-                unhex(replace(uuid(), '-', '')),
+                unhex('22222222222222222222222222222222'),
                 'test',
                 'test@gmail.com',
                 '$2a$10$JFdzaFBZtffT548tqHsZR.Cvje5BhA86h86J5.jN/0YIuvSlExnJi',
                 '***REMOVED_JWT_TOKEN***',
                 2
         );
-SET @user_id = (
-                SELECT id
-                FROM `users`
-                WHERE email = 'baroniusokay@gmail.com'
-        );
+SET @user_id = unhex('11111111111111111111111111111111');
 INSERT INTO `surveys` (
                 `id`,
                 `created_at`,
@@ -44,40 +40,40 @@ INSERT INTO `surveys` (
                 `user_id`
         )
 VALUES (
-                unhex(replace(uuid(), '-', '')),
-                NULL,
+                unhex('33333333333333333333333333333333'),
+                NOW(),
                 1,
                 'test',
                 'test',
                 @user_id
         ),
         (
-                unhex(replace(uuid(), '-', '')),
-                NULL,
+                unhex('44444444444444444444444444444444'),
+                NOW(),
                 1,
                 'subtitle',
                 'title',
                 @user_id
         ),
         (
-                unhex(replace(uuid(), '-', '')),
-                NULL,
+                unhex('55555555555555555555555555555555'),
+                NOW(),
                 1,
                 'subtitle',
                 'title',
                 @user_id
         ),
         (
-                unhex(replace(uuid(), '-', '')),
-                NULL,
+                unhex('66666666666666666666666666666666'),
+                NOW(),
                 0,
                 'subtitle',
                 'title',
                 @user_id
         ),
         (
-                unhex(replace(uuid(), '-', '')),
-                NULL,
+                unhex('77777777777777777777777777777777'),
+                NOW(),
                 0,
                 'subtitle',
                 'title',

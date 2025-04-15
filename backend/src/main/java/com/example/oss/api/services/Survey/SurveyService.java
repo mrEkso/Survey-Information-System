@@ -15,7 +15,7 @@ import java.util.UUID;
 public interface SurveyService extends modelMapperable<Survey, SurveyDto> {
     Optional<Survey> findById(UUID id);
 
-    List<Survey> findByUser(User user);
+    Page<Survey> findByUser(User user, int page);
 
     Page<Survey> findAll(String searchText, int page);
 

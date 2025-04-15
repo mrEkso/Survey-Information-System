@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,8 +30,9 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public List<Survey> findByUser(User user) {
-        return fr.getSurveyRepository().findByUserId(user.getId());
+    public Page<Survey> findByUser(User user, int page) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+        return fr.getSurveyRepository().findByUserId(user.getId(), pageable);
     }
 
     @Override
@@ -44,6 +46,7 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public Survey insert(Survey survey, User user) {
         survey.setUser(user);
+        survey.setCreatedAt(Instant.now());
         return fr.getSurveyRepository().save(survey);
     }
 
