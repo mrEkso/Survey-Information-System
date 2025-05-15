@@ -1,10 +1,8 @@
 package com.example.oss.api.services.User;
 
-import com.example.oss.api.dto.UserDto;
-import com.example.oss.api.models.User;
-import com.example.oss.api.repository.factory.FactoryRepository;
-import com.example.oss.api.security.jwt.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -15,8 +13,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.UUID;
+import com.example.oss.api.dto.UserDto;
+import com.example.oss.api.models.User;
+import com.example.oss.api.repository.factory.FactoryRepository;
+import com.example.oss.api.security.jwt.JwtTokenProvider;
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Lazy)
@@ -32,7 +36,7 @@ public class UserServiceImpl implements UserService {
         Pageable pageable = PageRequest.of(page, PAGE_SIZE);
         if (searchText == null || searchText.isEmpty())
             return fr.getUserRepository().findAll(pageable);
-        return fr.getUserRepository().findByUsername(pageable, searchText);
+        return fr.getUserRepository().findByNickname(pageable, searchText);
     }
 
     @Override
@@ -67,13 +71,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkPassword(User user, String password) {
-        return !encoder().matches(password, loadUserByUsername(user.getEmail()).getPassword());
+        return encoder().matches(password, loadUserByUsername(user.getEmail()).getPassword());
     }
 
     @Override
     public User register(User user) {
         user.setPassword(encoder().encode(user.getPassword()));
         user.setToken(jwtTokenProvider.createToken(user));
+        if (user.getTwoFactorSecret() == null) {
+            GoogleAuthenticator gAuth = new GoogleAuthenticator();
+            GoogleAuthenticatorKey key = gAuth.createCredentials();
+            user.setTwoFactorSecret(key.getKey());
+        }
+        user.setTwoFactorEnabled(true);
+        return fr.getUserRepository().save(user);
+    }
+
+    @Override
+    public User grantAdminRoleByEmail(String email) {
+        User user = fr.getUserRepository().findByEmail(email);
+        if (user == null)
+            throw new IllegalArgumentException("Користувача не знайдено");
+        if (user.isAdmin())
+            throw new IllegalArgumentException("Користувач вже є адміністратором");
+        user.setRole(User.ROLE_ADMIN);
         return fr.getUserRepository().save(user);
     }
 

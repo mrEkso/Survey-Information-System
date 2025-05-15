@@ -26,6 +26,7 @@ services:
     volumes:
       - ./backend/src:/app/src
       - ~/.m2:/root/.m2
+      - ./uploads:/app/uploads
     ports:
       - ${SPRING_DOCKER_PORT}:${SPRING_PORT}
     environment:
@@ -33,7 +34,7 @@ services:
       - SPRING_DEVTOOLS_LIVERELOAD_ENABLED=true
       - JAVA_OPTS=-Dspring.devtools.restart.enabled=true -Dspring.devtools.livereload.enabled=true
       - SPRING_PROFILES_ACTIVE=dev
-      - DB_URL=${DB_URL}
+      - DB_URL=${DB_PROD_URL}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
     depends_on:

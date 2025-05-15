@@ -1,27 +1,41 @@
 package com.example.oss.api.services.Survey;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.oss.api.dto.SurveyDto;
+import com.example.oss.api.dto.SurveyListItemDto;
 import com.example.oss.api.models.Survey;
 import com.example.oss.api.models.User;
 import com.example.oss.api.services.modelMapperable;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Component
 public interface SurveyService extends modelMapperable<Survey, SurveyDto> {
-    Optional<Survey> findById(UUID id);
+    Survey findById(UUID id);
 
-    Page<Survey> findByUser(User user, int page);
+    Survey findByIdWithIncrementViews(UUID id, User user);
 
-    Page<Survey> findAll(String searchText, int page);
+    Page<Survey> findByUser(User user, int page, String searchText, Boolean open, String sort);
 
-    Survey insert(Survey survey, User user);
+    List<Survey> findByUser(User user);
 
-    Survey update(Survey survey, User user);
+    Page<Survey> findAll(String searchText, int page, Boolean open, String sort);
 
-    void delete(Survey survey);
+    Survey create(SurveyDto surveyDto, User user);
+
+    Survey update(SurveyDto surveyDto, User user);
+
+    void delete(UUID id) throws IOException;
+
+    Survey uploadSurveyImage(String id, MultipartFile image, User user) throws IOException;
+
+    Resource getSurveyImage(String fileName) throws IOException;
+
+    SurveyListItemDto convertToListItemDto(Survey survey);
 }

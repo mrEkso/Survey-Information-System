@@ -1,15 +1,17 @@
-import {Button} from "@mui/material";
+import { Button } from "@mui/material";
 import PropTypes from "prop-types";
+import React from "react";
 
-export const PrimaryButton = (props) => {
-    const {children, ...buttonProps} = props;
+export const PrimaryButton = React.forwardRef((props, ref) => {
+    const { children, ...buttonProps } = props;
     return (<Button {...buttonProps}
-                    variant={"contained"}
-                    size={"medium"}
-                    color={"primary"}
-                    className={"opacity-animation"}
+        ref={ref}
+        variant={"contained"}
+        size={"medium"}
+        color={"primary"}
+        className={"opacity-animation"}
     >{children}</Button>)
-}
+});
 
 PrimaryButton.propTypes = {
     children: PropTypes.string

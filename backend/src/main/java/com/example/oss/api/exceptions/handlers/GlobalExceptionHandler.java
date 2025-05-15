@@ -1,9 +1,7 @@
 package com.example.oss.api.exceptions.handlers;
 
-import com.example.oss.api.exceptions.models.ErrorDetail;
-import com.example.oss.api.exceptions.models.ErrorResponse;
-import com.example.oss.api.exceptions.models.ErrorValidationResponse;
-import jakarta.security.auth.message.AuthException;
+import java.util.List;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,21 +10,26 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.List;
+import com.example.oss.api.exceptions.models.ErrorDetail;
+import com.example.oss.api.exceptions.models.ErrorResponse;
+import com.example.oss.api.exceptions.models.ErrorValidationResponse;
 
-import static com.example.oss.api.lang.LocalizationService.toLocale;
+import jakarta.security.auth.message.AuthException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        String message = toLocale("error.data.integrity");
+        log.error("DataIntegrityViolationException", ex);
+        String message = "Помилка цілісності даних";
         if (ex.getMessage().contains("UK_r43af9ap4edm43mmtq01oddj6"))
-            message = toLocale("error.user.username.unique");
+            message = "Користувач з таким нікнеймом вже існує";
         if (ex.getMessage().contains("UK_6dotkott2kjsp8vw4d0m25fb7"))
-            message = toLocale("error.user.email.unique");
+            message = "Користувач з такою електронною поштою вже існує";
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getClass().getSimpleName(),
@@ -37,20 +40,22 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleNullPointerException(NullPointerException ex) {
+        log.error("NullPointerException", ex);
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getClass().getSimpleName(),
-                ex.getMessage() != null ? toLocale(ex.getMessage()) : toLocale("error.null.value"));
+                ex.getMessage() != null ? ex.getMessage() : "Помилка значення");
     }
 
     @ExceptionHandler(AuthException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public ErrorResponse handleBadCredentialsException(AuthException ex) {
+        log.error("AuthException", ex);
         return new ErrorResponse(
                 HttpStatus.UNAUTHORIZED.value(),
                 ex.getClass().getSimpleName(),
-                ex.getMessage() != null ? toLocale(ex.getMessage()) : toLocale("error.auth.failed"));
+                ex.getMessage() != null ? ex.getMessage() : "Помилка автентифікації");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -61,14 +66,13 @@ public class GlobalExceptionHandler {
                 .map(fieldError -> new ErrorDetail(
                         fieldError.getField(),
                         fieldError.getDefaultMessage() != null ? fieldError.getDefaultMessage()
-                                : toLocale("error.validation.object.failed", fieldError.getField())))
+                                : "Помилка валідації для " + fieldError.getField()))
                 .toList();
 
         return new ErrorValidationResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getClass().getSimpleName(),
-                toLocale("error.validation.failed",
-                        ex.getObjectName(), ex.getErrorCount()),
+                "Помилка валідації для " + ex.getObjectName(),
                 errors);
     }
 
@@ -76,9 +80,10 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorResponse handleGeneralException(Exception ex) {
+        log.error("Exception", ex);
         return new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 ex.getClass().getSimpleName(),
-                toLocale("error.server.error") + ": " + toLocale(ex.getMessage()));
+                "Помилка сервера: " + ex.getMessage());
     }
 }

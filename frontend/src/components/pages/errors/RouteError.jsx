@@ -1,5 +1,5 @@
-import {useRouteError} from "react-router-dom";
-import {CenteredContainer} from "@components/ui/containers/CenteredContainer.jsx";
+import { CenteredContainer } from "@components/ui/containers/CenteredContainer.jsx";
+import { useRouteError } from "react-router-dom";
 
 export default function RouteError() {
     const error = useRouteError();
@@ -7,8 +7,8 @@ export default function RouteError() {
 
     return (
         <CenteredContainer>
-            <h1>Oops!</h1>
-            <p>Sorry, an unexpected error has occurred.</p>
+            <h1>Упс!</h1>
+            <p>Виникла неочікувана помилка.</p>
             <p>
                 <i>{error.statusText || error.message}</i>
             </p>

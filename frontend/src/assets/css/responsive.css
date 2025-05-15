@@ -1,0 +1,138 @@
+/* Global Responsive Styles */
+
+/* Base styles for all devices */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Small phones (up to 480px) */
+@media screen and (max-width: 480px) {
+    html {
+        font-size: 14px;
+    }
+
+    .MuiContainer-root {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+
+    /* Fix for overflowing elements */
+    .width-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+
+    /* Smaller paddings for mobile */
+    .MuiPaper-root {
+        padding: 1rem !important;
+    }
+
+    /* Make buttons more tappable on mobile */
+    .MuiButton-root {
+        min-height: 48px !important;
+        font-size: 1rem !important;
+    }
+}
+
+/* Phones (480px to 767px) */
+@media screen and (min-width: 481px) and (max-width: 767px) {
+    html {
+        font-size: 15px;
+    }
+
+    .MuiContainer-root {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+}
+
+/* Tablets (768px to 1023px) */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    html {
+        font-size: 16px;
+    }
+
+    .MuiContainer-root {
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+}
+
+/* Small laptops and large tablets (1024px to 1365px) */
+@media screen and (min-width: 1024px) and (max-width: 1365px) {
+    .MuiContainer-root {
+        padding-left: 32px !important;
+        padding-right: 32px !important;
+    }
+}
+
+/* Stacking elements on smaller screens */
+@media screen and (max-width: 767px) {
+    .stack-on-mobile {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .full-width-on-mobile {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Center text on mobile */
+    .text-center-mobile {
+        text-align: center !important;
+    }
+
+    /* Hide elements on mobile */
+    .hide-on-mobile {
+        display: none !important;
+    }
+
+    /* Adjustments for grid layouts */
+    .MuiGrid-container {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+}
+
+/* Utility classes for responsive margins */
+@media screen and (max-width: 767px) {
+    .mb-sm-2 {
+        margin-bottom: 1rem !important;
+    }
+
+    .mb-sm-3 {
+        margin-bottom: 1.5rem !important;
+    }
+
+    .mt-sm-2 {
+        margin-top: 1rem !important;
+    }
+
+    .mt-sm-3 {
+        margin-top: 1.5rem !important;
+    }
+
+    /* Reduce paddings on mobile */
+    .reduce-padding-mobile {
+        padding: 1rem !important;
+    }
+}
+
+/* Fix for touch devices */
+@media (hover: none) {
+    .MuiButton-root:hover {
+        background-color: inherit !important;
+    }
+
+    a:hover {
+        opacity: 1 !important;
+    }
+}

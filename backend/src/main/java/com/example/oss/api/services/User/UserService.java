@@ -1,14 +1,15 @@
 package com.example.oss.api.services.User;
 
-import com.example.oss.api.dto.UserDto;
-import com.example.oss.api.models.User;
-import com.example.oss.api.services.modelMapperable;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-import java.util.UUID;
+import com.example.oss.api.dto.UserDto;
+import com.example.oss.api.models.User;
+import com.example.oss.api.services.modelMapperable;
 
 @Component
 public interface UserService extends UserDetailsService, modelMapperable<User, UserDto> {
@@ -27,4 +28,6 @@ public interface UserService extends UserDetailsService, modelMapperable<User, U
     boolean checkPassword(User user, String password);
 
     User register(User user);
+
+    User grantAdminRoleByEmail(String email);
 }

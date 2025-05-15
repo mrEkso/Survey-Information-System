@@ -1,6 +1,5 @@
 package com.example.oss.api.responses;
 
-import com.example.oss.api.lang.LocalizationService;
 import lombok.Data;
 import lombok.Getter;
 
@@ -12,9 +11,9 @@ public class BaseAuthResponse {
     private Object data;
     private String token;
 
-    public BaseAuthResponse(int status, String msgCode, Object data, String token) {
+    public BaseAuthResponse(int status, String message, Object data, String token) {
         this.status = status;
-        this.message = LocalizationService.toLocale(msgCode);
+        this.message = message;
         this.data = data;
         this.token = token;
     }

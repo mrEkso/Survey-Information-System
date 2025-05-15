@@ -1,30 +1,29 @@
 package com.example.oss.api.repository.factory;
 
-import com.example.oss.api.repository.ApplicantRepository;
+import org.springframework.stereotype.Component;
+
+import com.example.oss.api.repository.MessageRepository;
+import com.example.oss.api.repository.SurveyOptionRepository;
 import com.example.oss.api.repository.SurveyRepository;
 import com.example.oss.api.repository.UserRepository;
 import com.example.oss.api.repository.VoteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.example.oss.api.repository.VoteValueRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class FactoryRepositoryImpl implements FactoryRepository {
-    ApplicantRepository applicantRepository;
-    UserRepository userRepository;
-    VoteRepository voteRepository;
-    SurveyRepository surveyRepository;
-
-    @Autowired
-    public FactoryRepositoryImpl(ApplicantRepository applicantRepository, UserRepository userRepository, VoteRepository voteRepository, SurveyRepository surveyRepository) {
-        this.applicantRepository = applicantRepository;
-        this.userRepository = userRepository;
-        this.voteRepository = voteRepository;
-        this.surveyRepository = surveyRepository;
-    }
+    private final SurveyOptionRepository surveyOptionRepository;
+    private final UserRepository userRepository;
+    private final VoteRepository voteRepository;
+    private final SurveyRepository surveyRepository;
+    private final MessageRepository messageRepository;
+    private final VoteValueRepository voteValueRepository;
 
     @Override
-    public ApplicantRepository getApplicantRepository() {
-        return applicantRepository;
+    public SurveyOptionRepository getSurveyOptionRepository() {
+        return surveyOptionRepository;
     }
 
     @Override
@@ -40,5 +39,15 @@ public class FactoryRepositoryImpl implements FactoryRepository {
     @Override
     public SurveyRepository getSurveyRepository() {
         return surveyRepository;
+    }
+
+    @Override
+    public MessageRepository getMessageRepository() {
+        return messageRepository;
+    }
+
+    @Override
+    public VoteValueRepository getVoteValueRepository() {
+        return voteValueRepository;
     }
 }

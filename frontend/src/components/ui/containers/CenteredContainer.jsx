@@ -1,15 +1,18 @@
-import {Container} from "@mui/material";
+import { Container } from "@mui/material";
 import PropTypes from "prop-types";
 
-export const CenteredContainer = ({children, sx}) => {
+export const CenteredContainer = ({ children, sx, id }) => {
     return (
-        <Container sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            ...sx
-        }}>
+        <Container
+            id={id}
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                ...sx
+            }}
+        >
             {children}
         </Container>
     );
@@ -17,5 +20,6 @@ export const CenteredContainer = ({children, sx}) => {
 
 CenteredContainer.propTypes = {
     children: PropTypes.node,
-    sx: PropTypes.object
+    sx: PropTypes.object,
+    id: PropTypes.string
 }

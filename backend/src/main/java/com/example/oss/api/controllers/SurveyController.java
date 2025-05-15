@@ -1,119 +1,135 @@
 package com.example.oss.api.controllers;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.oss.api.dto.SurveyDto;
+import com.example.oss.api.dto.SurveyListItemDto;
 import com.example.oss.api.models.Survey;
-import com.example.oss.api.models.SurveyOption;
 import com.example.oss.api.models.User;
 import com.example.oss.api.models.Vote;
 import com.example.oss.api.responses.crud.CreateResponse;
 import com.example.oss.api.responses.crud.DeleteResponse;
 import com.example.oss.api.responses.crud.UpdateResponse;
-import com.example.oss.api.services.Applicant.ApplicantService;
+import com.example.oss.api.services.Message.MessageService;
 import com.example.oss.api.services.Survey.SurveyService;
+import com.example.oss.api.services.SurveyOption.SurveyOptionService;
 import com.example.oss.api.services.Vote.VoteService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/surveys")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class SurveyController {
-    final private SurveyService surveyService;
-    final private VoteService voteService;
-    final private ApplicantService applicantService;
+    private final SurveyService surveyService;
+    private final SurveyOptionService surveyOptionService;
+    private final MessageService messageService;
+    private final VoteService voteService;
 
     @GetMapping({ "", "/search" })
-    public ResponseEntity<Page<SurveyDto>> index(
-            @RequestParam(required = false) String searchText,
-            @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok(surveyService.findAll(searchText, page).map(surveyService::convertToDto));
+    public ResponseEntity<Page<SurveyListItemDto>> index(@RequestParam(required = false) String searchText,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) Boolean open,
+            @RequestParam(required = false) String sort) {
+        return ResponseEntity
+                .ok(surveyService.findAll(searchText, page, open, sort).map(surveyService::convertToListItemDto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> show(
-            @PathVariable String id,
-            @AuthenticationPrincipal User user) {
-        if (id == null || id.isEmpty()) {
-            throw new IllegalArgumentException("error.survey.id.empty");
-        }
-        UUID surveyId = UUID.fromString(id);
-        Optional<Survey> survey = surveyService.findById(surveyId);
-        if (survey.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                    "status", 404,
-                    "message", "Survey not found"));
-        }
-        SurveyDto surveyDto = surveyService.convertToDto(survey.get());
-        boolean hasVoted = false;
+    public ResponseEntity<?> show(@PathVariable String id, @AuthenticationPrincipal User user) {
+        Survey survey = surveyService.findByIdWithIncrementViews(UUID.fromString(id), user);
+        Map<String, Object> response = new HashMap<>();
+        response.put("survey", surveyService.convertToDto(survey));
         if (user != null) {
-            Vote vote = new Vote(user, survey.get());
-            // hasVoted = voteService.checkVote(vote);
+            Vote vote = voteService.findBySurveyAndUser(survey, user);
+            response.put("vote", vote != null ? voteService.convertToDto(vote) : null);
         }
-        return ResponseEntity.ok(Map.of(
-                "survey", surveyDto,
-                "hasVoted", hasVoted));
+        if (user != null && user.getId().equals(survey.getUser().getId()))
+            response.put("messages", messageService.getMessagesBySurvey(survey.getId()).stream()
+                    .map(messageService::convertToDto).toList());
+        if (!survey.isOpen())
+            response.put("votes", voteService.findBySurvey(survey).stream()
+                    .map(voteService::convertToDto).toList());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<CreateResponse> store(
-            @Valid @RequestBody Survey survey,
-            @AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(new CreateResponse(
-                surveyService.convertToDto(
-                        surveyService.insert(survey, user))));
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> store(@Valid @RequestBody SurveyDto surveyDto, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(new CreateResponse(surveyService.convertToDto(surveyService.create(surveyDto, user))));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(
-            @Valid @RequestBody Survey survey,
+    @PreAuthorize("@messageSecurity.isSurveyOwner(#surveyDto.id, principal)")
+    public ResponseEntity<UpdateResponse> update(@Valid @RequestBody SurveyDto surveyDto,
             @AuthenticationPrincipal User user) {
-        Optional<Survey> existingSurvey = surveyService.findById(survey.getId());
-        if (!existingSurvey.get().getUser().getId().equals(user.getId())) {
-            throw new AccessDeniedException("error.survey.not.owner");
-        }
-        return ResponseEntity.ok(new UpdateResponse(
-                surveyService.convertToDto(
-                        surveyService.update(survey, user))));
+        return ResponseEntity.ok(new UpdateResponse(surveyService.convertToDto(surveyService.update(surveyDto, user))));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<DeleteResponse> destroy(@PathVariable UUID id) {
-        Optional<Survey> survey = surveyService.findById(id);
-        if (survey.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        surveyService.delete(survey.get());
+    @PreAuthorize("@messageSecurity.isSurveyOwner(#id, principal)")
+    public ResponseEntity<DeleteResponse> destroy(@PathVariable UUID id, @AuthenticationPrincipal User user)
+            throws IOException {
+        surveyService.delete(id);
         return ResponseEntity.ok(new DeleteResponse());
     }
 
     @GetMapping("/my")
-    public ResponseEntity<Page<SurveyDto>> mySurveys(
-            @AuthenticationPrincipal User user,
-            @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok(surveyService.findByUser(user, page).map(surveyService::convertToDto));
+    public ResponseEntity<Page<SurveyDto>> mySurveys(@AuthenticationPrincipal User user,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String searchText,
+            @RequestParam(required = false) Boolean open,
+            @RequestParam(required = false) String sort) {
+        return ResponseEntity
+                .ok(surveyService.findByUser(user, page, searchText, open, sort).map(surveyService::convertToDto));
     }
 
     @GetMapping("/result/{id}")
     public ResponseEntity<?> surveyResult(@PathVariable UUID id) {
-        Optional<Survey> survey = surveyService.findById(id);
-        if (survey.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        List<SurveyOption> applicants = applicantService.getByVotingId(id);
-        return ResponseEntity.ok(Map.of(
-                "survey", surveyService.convertToDto(survey.get()),
-                "options", applicants));
+        Survey survey = surveyService.findById(id);
+        Map<String, Object> response = new HashMap<>();
+        response.put("survey", surveyService.convertToDto(survey));
+        response.put("surveyOptions", survey.getOptions().stream().map(surveyOptionService::convertToDto).toList());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("@messageSecurity.isSurveyOwner(#id, principal)")
+    public ResponseEntity<SurveyDto> uploadImage(@PathVariable String id,
+            @RequestParam("image") MultipartFile image, @AuthenticationPrincipal User user) throws IOException {
+        return ResponseEntity.ok(surveyService.convertToDto(surveyService.uploadSurveyImage(id, image, user)));
+    }
+
+    @GetMapping("/images/{fileName}")
+    public ResponseEntity<Resource> getImage(@PathVariable String fileName) throws IOException {
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(surveyService.getSurveyImage(fileName));
+    }
+
+    @GetMapping("/my-all")
+    public ResponseEntity<List<SurveyDto>> allMySurveys(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(surveyService.findByUser(user).stream().map(surveyService::convertToDto).toList());
     }
 }

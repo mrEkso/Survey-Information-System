@@ -1,14 +1,19 @@
 body {
-    animation: body-animation 2s;
+    background-color: #808000;
+    /* Olive color */
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+    scrollbar-gutter: stable;
 }
 
-@keyframes body-animation {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
+html {
+    overflow-x: hidden;
+    width: 100%;
+    /* Prevent scrollbar from causing layout shift */
+    scrollbar-gutter: stable;
 }
 
 .gradientText {
@@ -19,9 +24,11 @@ body {
     0% {
         background-position: 0 50%;
     }
+
     50% {
         background-position: 100% 50%;
     }
+
     100% {
         background-position: 0 50%;
     }
@@ -35,6 +42,7 @@ body {
     0% {
         scale: 0;
     }
+
     100% {
         scale: 1;
     }
@@ -45,6 +53,7 @@ body {
         width: 30%;
         margin-left: 10%;
     }
+
     100% {
         margin-left: 5%;
     }
@@ -66,4 +75,56 @@ body {
 
 .clickable {
     cursor: pointer;
+}
+
+/* Ensure content after fixed header is not hidden */
+main {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* Fix for select dropdowns causing layout shift */
+.MuiSelect-select,
+.MuiPopover-root {
+    transform: none !important;
+}
+
+.MuiPopover-paper {
+    max-width: none !important;
+}
+
+/* Prevent layout shift when UI components are opened */
+.MuiPopover-root {
+    position: fixed !important;
+}
+
+/* Fix for overlapping dropdowns */
+.MuiSelect-select {
+    z-index: 1000 !important;
+}
+
+/* Стабилизация отображения фильтров */
+.MuiFormControl-root {
+    vertical-align: top !important;
+    will-change: auto !important;
+    transform: translateZ(0);
+}
+
+/* Предотвращение прыжков при переключении */
+.MuiMenuItem-root {
+    position: relative !important;
+    height: 40px !important;
+    min-height: 40px !important;
+}
+
+/* Стабилизация формы фильтров */
+.MuiInputBase-root {
+    height: 40px !important;
+}
+
+.MuiSelect-select {
+    display: flex !important;
+    align-items: center !important;
 }

@@ -1,4 +1,4 @@
-import {Typography} from "@mui/material";
+import { Typography } from "@mui/material";
 
 export const LogoTypography = (props) => {
     return (
@@ -6,13 +6,13 @@ export const LogoTypography = (props) => {
             {...props}
             variant="h4"
             sx={{
-                display: {xs: 'none', sm: 'block'},
+                display: { xs: 'none', sm: 'block' },
                 fontWeight: 600,
                 letterSpacing: '.1rem',
             }}
             color={"white"}
         >
-            Humster Co.
+            ЗСУ Логістика
         </Typography>
     )
 }

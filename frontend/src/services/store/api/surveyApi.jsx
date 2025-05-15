@@ -1,17 +1,31 @@
-import { urls } from "src/services/store/consts.jsx";
 import { api } from "src/services/store/api.jsx";
+import { urls } from "src/services/store/consts.jsx";
 
 export const surveyApi = api.injectEndpoints({
     endpoints: builder => ({
         getSurveys: builder.query({
-            query: (page = 0) => ({
-                url: `${urls.surveys.surveys}?page=${page}`
-            }),
+            query: ({ page = 0, searchText = '', open, sort } = {}) => {
+                let url = `${urls.surveys.surveys}?page=${page}`;
+                if (searchText) url += `&searchText=${encodeURIComponent(searchText)}`;
+                if (typeof open !== 'undefined') url += `&open=${open === true ? 'true' : 'false'}`;
+                if (sort && sort !== 'default') url += `&sort=${sort}`;
+                return { url };
+            },
             providesTags: ['Survey']
         }),
         getUserSurveys: builder.query({
-            query: (page = 0) => ({
-                url: `${urls.surveys.my}?page=${page}`
+            query: ({ page = 0, searchText = '', open, sort } = {}) => {
+                let url = `${urls.surveys.my}?page=${page}`;
+                if (searchText) url += `&searchText=${encodeURIComponent(searchText)}`;
+                if (typeof open !== 'undefined') url += `&open=${open === true ? 'true' : 'false'}`;
+                if (sort && sort !== 'default') url += `&sort=${sort}`;
+                return { url };
+            },
+            providesTags: ['Survey']
+        }),
+        getAllUserSurveys: builder.query({
+            query: () => ({
+                url: `${urls.surveys.myAll}`
             }),
             providesTags: ['Survey']
         }),
@@ -39,16 +53,40 @@ export const surveyApi = api.injectEndpoints({
             }),
             invalidatesTags: ['Survey']
         }),
+        uploadSurveyImage: builder.mutation({
+            query: ({ id, image }) => {
+                const formData = new FormData();
+                formData.append('image', image);
+                return {
+                    url: `${urls.surveys.surveys}/${id}/image`,
+                    method: 'POST',
+                    body: formData,
+                };
+            },
+            invalidatesTags: (result, error, { id }) => [{ type: 'Survey', id }],
+        }),
+        getSurveyImage: builder.query({
+            query: (fileName) => ({
+                url: `${urls.surveys.images}/${fileName}`,
+                responseHandler: (response) => response.blob(),
+            }),
+            transformResponse: (response) => {
+                return URL.createObjectURL(response);
+            },
+        }),
     })
 })
 
 export const {
     useGetSurveysQuery,
     useGetUserSurveysQuery,
+    useGetAllUserSurveysQuery,
     useGetSurveyQuery,
     useCreateSurveyMutation,
     useUpdateSurveyMutation,
-    useDeleteSurveyMutation
+    useDeleteSurveyMutation,
+    useUploadSurveyImageMutation,
+    useGetSurveyImageQuery,
 } = surveyApi
 
-export const { endpoints: { getSurveys, getUserSurveys, getSurvey, createSurvey, updateSurvey, deleteSurvey } } = surveyApi
+export const { endpoints: { getSurveys, getUserSurveys, getAllUserSurveys, getSurvey, createSurvey, updateSurvey, deleteSurvey } } = surveyApi
