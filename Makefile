@@ -4,7 +4,7 @@
 
 .PHONY: up down stop restart dev help rebuild-frontend
 
-## Запустити всі сервіси (бекенд, фронт, БД) у Docker
+## Запустити всі сервіси (Back, Front, БД) у Docker
 up:
 	docker compose up -d --build
 
@@ -35,7 +35,7 @@ rebuild-frontend:
 dev:
 	docker compose up -d mysql react-app
 	# Запусти локально Spring Boot для хот-релоаду (Java)
-	C:\\Users\\main\\.cursor\\extensions\\redhat.java-1.41.1-win32-x64\\jre\\21.0.6-win32-x86_64\\bin\\java.exe @C:\\Users\\main\\AppData\\Local\\Temp\\cp_728p990r9mvdru9d6frvz7a3v.argfile com.example.oss.OnlineSurveySystemApplication
+	C:\\Users\\main\\.cursor\\extensions\\redhat.java-1.41.1-win32-x64\\jre\\21.0.6-win32-x86_64\\bin\\java.exe @C:\\Users\\main\\AppData\\Local\\Temp\\cp_728p990r9mvdru9d6frvz7a3v.argfile com.oss.OnlineSurveySystemApplication
 
 ## Показати всі доступні команди
 help:

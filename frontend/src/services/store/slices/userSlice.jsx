@@ -8,25 +8,6 @@ const slice = createSlice({
         user: null,
         isAuth: false,
         token: localStorage.getItem('token') || null,
-        // TODO: remove this
-        //// admin
-        // user: {
-        //     id: "11111111-1111-1111-1111-111111111111",
-        //     nickname: "baron",
-        //     email: "bar@gmail.com",
-        //     role: 1
-        // },
-        // isAuth: true,
-        // token: "***REMOVED_JWT_TOKEN***",
-        //// user
-        // user: {
-        //     id: "22222222-2222-2222-2222-222222222222",
-        //     nickname: "test",
-        //     email: "test@gmail.com",
-        //     role: 2
-        // },
-        // isAuth: true,
-        // token: "***REMOVED_JWT_TOKEN***",
     },
     reducers: {
         setUser: (state, action) => {
@@ -73,7 +54,7 @@ const slice = createSlice({
                 state.token = null;
                 localStorage.removeItem('token');
             })
-            // После успешной верификации 2FA авторизуем пользователя
+            // Після вдалої верифікації 2FA авторизуємо користувача
             .addMatcher(authApi.endpoints.verify2fa.matchFulfilled, (state, action) => {
                 state.user = action.payload.data;
                 state.isAuth = true;

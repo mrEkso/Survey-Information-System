@@ -153,49 +153,49 @@ VALUES (
                 0
         );
 -- Survey 4: Захист та безпека
-INSERT INTO surveys (
-                id,
-                created_at,
-                open,
-                subtitle,
-                title,
-                user_id,
-                image_url,
-                survey_type,
-                min_rating,
-                max_rating
-        )
-VALUES (
-                unhex('ddddddddddddddddddddddddddddddd1'),
-                NOW(),
-                1,
-                'Оцініть важливість кожного елементу захисту за шкалою від 1 до 5',
-                'Захист та безпека',
-                @user_id,
-                'security.jpg',
-                'RATING_SCALE',
-                1,
-                5
-        );
-INSERT INTO survey_options (id, survey_id, name, votes)
-VALUES (
-                unhex('ddddddddddddddddddddddddddddddde'),
-                unhex('ddddddddddddddddddddddddddddddd1'),
-                'Бронежилети',
-                0
-        ),
-        (
-                unhex('dddddddddddddddddddddddddddddddf'),
-                unhex('ddddddddddddddddddddddddddddddd1'),
-                'Шоломи',
-                0
-        ),
-        (
-                unhex('ddddddddddddddddddddddddddddddff'),
-                unhex('ddddddddddddddddddddddddddddddd1'),
-                'Захист для техніки',
-                0
-        );
+-- INSERT INTO surveys (
+--                 id,
+--                 created_at,
+--                 open,
+--                 subtitle,
+--                 title,
+--                 user_id,
+--                 image_url,
+--                 survey_type,
+--                 min_rating,
+--                 max_rating
+--         )
+-- VALUES (
+--                 unhex('ddddddddddddddddddddddddddddddd1'),
+--                 NOW(),
+--                 1,
+--                 'Оцініть важливість кожного елементу захисту за шкалою від 1 до 5',
+--                 'Захист та безпека',
+--                 @user_id,
+--                 'security.jpg',
+--                 'RATING_SCALE',
+--                 1,
+--                 5
+--         );
+-- INSERT INTO survey_options (id, survey_id, name, votes)
+-- VALUES (
+--                 unhex('ddddddddddddddddddddddddddddddde'),
+--                 unhex('ddddddddddddddddddddddddddddddd1'),
+--                 'Бронежилети',
+--                 0
+--         ),
+--         (
+--                 unhex('dddddddddddddddddddddddddddddddf'),
+--                 unhex('ddddddddddddddddddddddddddddddd1'),
+--                 'Шоломи',
+--                 0
+--         ),
+--         (
+--                 unhex('ddddddddddddddddddddddddddddddff'),
+--                 unhex('ddddddddddddddddddddddddddddddd1'),
+--                 'Захист для техніки',
+--                 0
+--         );
 -- Survey 5: Харчування та побут
 INSERT INTO surveys (
                 id,
@@ -1212,48 +1212,48 @@ SET votes = 3
 WHERE id = unhex('ccccccccccccccccccccccccccccccce');
 -- Тактичні рації
 -- Голоси для "Захист та безпека" (Survey 4)
-INSERT INTO votes (
-                id,
-                user_id,
-                survey_id,
-                survey_option_id,
-                created_at
-        )
-VALUES (
-                unhex('d6666666666666666666666666666666'),
-                unhex('d1111111111111111111111111111111'),
-                unhex('ddddddddddddddddddddddddddddddd1'),
-                unhex('ddddddddddddddddddddddddddddddde'),
-                DATE_SUB(NOW(), INTERVAL 8 DAY)
-        ),
-        (
-                unhex('d7777777777777777777777777777777'),
-                unhex('d2222222222222222222222222222222'),
-                unhex('ddddddddddddddddddddddddddddddd1'),
-                unhex('ddddddddddddddddddddddddddddddde'),
-                DATE_SUB(NOW(), INTERVAL 7 DAY)
-        ),
-        (
-                unhex('d8888888888888888888888888888888'),
-                unhex('d3333333333333333333333333333333'),
-                unhex('ddddddddddddddddddddddddddddddd1'),
-                unhex('dddddddddddddddddddddddddddddddf'),
-                DATE_SUB(NOW(), INTERVAL 6 DAY)
-        ),
-        (
-                unhex('d9999999999999999999999999999999'),
-                unhex('d4444444444444444444444444444444'),
-                unhex('ddddddddddddddddddddddddddddddd1'),
-                unhex('ddddddddddddddddddddddddddddddff'),
-                DATE_SUB(NOW(), INTERVAL 5 DAY)
-        ),
-        (
-                unhex('daaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'),
-                unhex('d5555555555555555555555555555555'),
-                unhex('ddddddddddddddddddddddddddddddd1'),
-                unhex('ddddddddddddddddddddddddddddddff'),
-                DATE_SUB(NOW(), INTERVAL 4 DAY)
-        );
+-- INSERT INTO votes (
+--                 id,
+--                 user_id,
+--                 survey_id,
+--                 survey_option_id,
+--                 created_at
+--         )
+-- VALUES (
+--                 unhex('d6666666666666666666666666666666'),
+--                 unhex('d1111111111111111111111111111111'),
+--                 unhex('ddddddddddddddddddddddddddddddd1'),
+--                 unhex('ddddddddddddddddddddddddddddddde'),
+--                 DATE_SUB(NOW(), INTERVAL 8 DAY)
+--         ),
+--         (
+--                 unhex('d7777777777777777777777777777777'),
+--                 unhex('d2222222222222222222222222222222'),
+--                 unhex('ddddddddddddddddddddddddddddddd1'),
+--                 unhex('ddddddddddddddddddddddddddddddde'),
+--                 DATE_SUB(NOW(), INTERVAL 7 DAY)
+--         ),
+--         (
+--                 unhex('d8888888888888888888888888888888'),
+--                 unhex('d3333333333333333333333333333333'),
+--                 unhex('ddddddddddddddddddddddddddddddd1'),
+--                 unhex('dddddddddddddddddddddddddddddddf'),
+--                 DATE_SUB(NOW(), INTERVAL 6 DAY)
+--         ),
+--         (
+--                 unhex('d9999999999999999999999999999999'),
+--                 unhex('d4444444444444444444444444444444'),
+--                 unhex('ddddddddddddddddddddddddddddddd1'),
+--                 unhex('ddddddddddddddddddddddddddddddff'),
+--                 DATE_SUB(NOW(), INTERVAL 5 DAY)
+--         ),
+--         (
+--                 unhex('daaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'),
+--                 unhex('d5555555555555555555555555555555'),
+--                 unhex('ddddddddddddddddddddddddddddddd1'),
+--                 unhex('ddddddddddddddddddddddddddddddff'),
+--                 DATE_SUB(NOW(), INTERVAL 4 DAY)
+--         );
 UPDATE survey_options
 SET votes = 2
 WHERE id = unhex('ddddddddddddddddddddddddddddddde');
@@ -1996,9 +1996,9 @@ UPDATE surveys
 SET views = 56
 WHERE id = unhex('cccccccccccccccccccccccccccccccc');
 -- Засоби зв'язку
-UPDATE surveys
-SET views = 61
-WHERE id = unhex('ddddddddddddddddddddddddddddddd1');
+-- UPDATE surveys
+-- SET views = 61
+-- WHERE id = unhex('ddddddddddddddddddddddddddddddd1');
 -- Захист та безпека
 UPDATE surveys
 SET views = 38
